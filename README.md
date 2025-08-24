@@ -12,3 +12,7 @@ Kotlin/Ktor REST API for finding nearby mosques.
 ## Running Locally
 ```bash
 ./gradlew run
+
+## Endpoints
+-GET /health - Health check
+-GET /mosques/nearby?lat={lat}&lng={lng}&radiusKm={radius} - Find nearby mosques
