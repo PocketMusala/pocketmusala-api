@@ -7,6 +7,7 @@ plugins {
     id("io.ktor.plugin") version "2.3.4"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
     application
+    id("com.github.johnrengelman.shadow") version "8.1.1" 
 }
 
 group = "com.pocketmusala"
@@ -47,8 +48,15 @@ dependencies {
     
     // Logging
     implementation("ch.qos.logback:logback-classic:$logback_version")
+    //implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
     
     // Testing
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+}
+
+tasks {
+    shadowJar {
+        archiveFileName.set("pocketmusala-api-${version}-all.jar")
+    }
 }

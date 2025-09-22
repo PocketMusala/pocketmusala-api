@@ -18,7 +18,7 @@ fun main() {
 }
 
 fun Application.module() {
-    //configureFirebase()
+    configureFirebase()
     configureSerialization()
     configureMonitoring()
     configureRouting()

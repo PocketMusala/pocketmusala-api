@@ -7,24 +7,36 @@ import com.google.cloud.firestore.Firestore
 import com.google.firebase.cloud.FirestoreClient
 import io.ktor.server.application.*
 import java.io.ByteArrayInputStream
+import java.io.FileInputStream
 
 fun Application.configureFirebase() {
-    val projectId = System.getenv("GOOGLE_CLOUD_PROJECT") ?: "your-project-id"
-    val credentials = System.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+    val projectId = System.getenv("GOOGLE_CLOUD_PROJECT") ?: "pocketmusala-api"
+    val credentialsJson = System.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+    val credentialsFile = System.getenv("GOOGLE_APPLICATION_CREDENTIALS")
     
-    val options = if (credentials != null) {
-        FirebaseOptions.builder()
-            .setCredentials(GoogleCredentials.fromStream(ByteArrayInputStream(credentials.toByteArray())))
-            .setProjectId(projectId)
-            .build()
-    } else {
-        // Use default credentials (for local development with gcloud auth)
-        FirebaseOptions.builder()
-            .setProjectId(projectId)
-            .build()
+    val options = when {
+        credentialsJson != null -> {
+            log.info("Using JSON credentials")
+            FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(ByteArrayInputStream(credentialsJson.toByteArray())))
+                .setProjectId(projectId)
+                .build()
+        }
+        credentialsFile != null -> {
+            log.info("Using credentials file: $credentialsFile")
+            FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(FileInputStream(credentialsFile)))
+                .setProjectId(projectId)
+                .build()
+        }
+        else -> {
+            log.info("No credentials found, using default")
+            FirebaseOptions.builder()
+                .setProjectId(projectId)
+                .build()
+        }
     }
     
-    // Initialize Firebase if not already initialized
     if (FirebaseApp.getApps().isEmpty()) {
         FirebaseApp.initializeApp(options)
     }
